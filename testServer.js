@@ -14,4 +14,4 @@ app.ws('/echo', (ws, req) => {
     })
 })
 
-app.listen(80)
+app.listen(10000)
