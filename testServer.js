@@ -1,17 +1,20 @@
-const express = require('express')
-const enableWs = require('express-ws')
+var express = require('express');
+var expressWs = require('express-ws');
+var expressWs = expressWs(express());
+var app = expressWs.app;
 
-const app = express()
-enableWs(app)
+app.use(express.static('public'));
 
-app.ws('/echo', (ws, req) => {
-    ws.on('message', msg => {
-        ws.send(msg)
-    })
+var aWss = expressWs.getWss('/');
 
-    ws.on('close', () => {
-        console.log('WebSocket was closed')
-    })
-})
+app.ws('/', function(ws, req) {
+  console.log('Socket Connected');
 
-app.listen(10000)
+  ws.onmessage = function(msg) {
+    aWss.clients.forEach(function (client) {
+      client.send(msg.data)
+    });
+  };
+});
+
+app.listen(3444);
